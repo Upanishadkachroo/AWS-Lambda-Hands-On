@@ -24,9 +24,6 @@ This document provides a clear, step‑by‑step walkthrough for exploring AWS L
    * [Step 7: Fix Permission Issues](#step-7-fix-permission-issues)
 4. [Outcome / Expected Behavior](#outcome--expected-behavior)
 5. [Troubleshooting](#troubleshooting)
-6. [Security Considerations](#security-considerations)
-7. [Next Steps and Extensions](#next-steps-and-extensions)
-8. [Author / License](#author--license)
 
 ---
 
