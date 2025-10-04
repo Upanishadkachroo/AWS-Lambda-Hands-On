@@ -3,7 +3,6 @@
 In this part, we explored the AWS Management Console to understand how to set up a Lambda function and concept of events and triggers.
 
 ````markdown
-## Part 2: Actual Hands-On
 
 In this part, we implemented and tested a Node.js AWS Lambda function.
 
@@ -97,41 +96,37 @@ To perform numeric addition, we would need to convert them:
 const sum = Number(event.key2) + Number(event.key3);
 ```
 
+## Part 2: Actual Hands-On
+# AWS Lambda with S3 Trigger Hands-On
 
-````markdown
-##  Part 3: S3 Trigger Hands-On
-
-In this part, we connected **Amazon S3** with **AWS Lambda** to automatically process files uploaded to an S3 bucket.  
-The goal was to upload a text file to S3 and read its contents using a Lambda function.
+This exercise demonstrates how to integrate **Amazon S3** with **AWS Lambda** to process files uploaded to an S3 bucket and view the output in **CloudWatch Logs**.
 
 ---
 
-### Step 1: Setup
-1. Open two tabs in the same browser window:  
-   - **Tab 1:** AWS Lambda Console  
-   - **Tab 2:** Amazon S3 Console  
-
-2. Create a **text file** of your choice on your local system (e.g., `test.txt`).
-
----
-
-### Step 2: Create an S3 Bucket
-1. Go to the **S3 Console** → Create a new bucket.  
-2. In the **Properties** section, scroll to **Event notifications** to check if any event is attached.  
+## Step 1: Setup
+- Open two tabs in the same browser window:  
+  - **Tab 1:** AWS Lambda Console  
+  - **Tab 2:** Amazon S3 Console  
+- Create a text file on your system (e.g., `test.txt`) to upload later.  
 
 ---
 
-### Step 3: Create a Lambda Function with S3 Blueprint
-1. Switch to the **Lambda tab**.  
-2. Click on **Create Function** → Select **Use a blueprint**.  
-3. Search for and select the blueprint **`s3-get-object` (Python)**.  
-4. Keep the default execution role (first option: create a new role with basic Lambda permissions).  
-5. ⚠️ Do **not** add the S3 trigger from Lambda. We will attach it later directly from the S3 bucket.
+## Step 2: Create S3 Bucket
+1. Go to **S3 Console** → Create a new bucket.  
+2. In **Properties**, scroll down to **Event notifications** and check if any event is attached.  
 
 ---
 
-### Step 4: Modify the Lambda Code
-In the generated blueprint code, update the **try block** to log the object details and its body:
+## Step 3: Create Lambda Function Using S3 Blueprint
+1. In the **Lambda Console**, click **Create Function**.  
+2. Select **Use a blueprint** → choose **`s3-get-object` (Python)**.  
+3. Execution role: choose the **first option** (new role with basic Lambda permissions).  
+4. ⚠️ Do not add the S3 trigger here — we will attach it from the S3 bucket.  
+
+---
+
+## Step 4: Modify Lambda Code
+Update the **try block** in the generated code:  
 
 ```python
 try:
@@ -141,39 +136,36 @@ try:
     # return response['ContentType']
 ````
 
-Also, **comment out the first line of `lambda_handler`** if it references `event['Records'][0]` to avoid unnecessary issues.
+* Comment out the first line of `lambda_handler` if it references `event['Records'][0]`.
 
 ---
 
-### Step 5: Add S3 Event Notification
+## Step 5: Add S3 Event Notification
 
-1. Go back to the **S3 Console** → Open your bucket.
-2. Navigate to **Properties → Event notifications**.
-3. Create a new event notification:
+1. In **S3 Console**, open your bucket.
+2. Go to **Properties → Event notifications**.
+3. Create a new event:
 
-   * Event type: `PUT` (when an object is uploaded).
-   * Destination: Your Lambda function.
-4. Save changes.
-   → Now your S3 bucket is linked with the Lambda function.
-
----
-
-### Step 6: Test the Integration
-
-1. Upload a file (e.g., `test.txt` or even an image) into your S3 bucket.
-2. Check **CloudWatch Logs** for your Lambda function.
-
-   * You should see the **object metadata** and the **file content** printed.
+   * **Event type:** For all events(first option)
+   * **Destination:** Your Lambda function
+4. Save changes → S3 is now linked to Lambda.
 
 ---
 
-### Step 7: Fixing Permission Issues
+## Step 6: Test Integration
 
-If you see **Access Denied** errors:
+1. Upload a file (e.g., `test.txt` or an image) into your S3 bucket.
+2. Open **CloudWatch Logs** → check that your Lambda printed the object details and file body.
 
-1. Go to **S3 Bucket → Permissions**.
-2. Scroll down to **Block public access (bucket settings)** → **Turn it off**.
-3. Edit the **Bucket Policy** and add the following policy (update bucket name accordingly):
+---
+
+## Step 7: Fix Permission Issues
+
+If you encounter **Access Denied**:
+
+1. Go to **S3 → Permissions**.
+2. Turn off **Block public access (bucket settings)**.
+3. Add a **Bucket Policy** (replace bucket name with yours):
 
 ```json
 {
@@ -190,19 +182,17 @@ If you see **Access Denied** errors:
 }
 ```
 
-4. Save changes.
-5. Re-upload your file to the bucket.
+4. Save → Re-upload file.
+5. Now you should see the file content in **CloudWatch Logs**.
 
 ---
 
-### Step 8: Verify Output
+**Outcome:**
 
-* Go to **CloudWatch Logs** again.
-* You should now see the full **file content (body)** logged successfully.
+* Successfully connected **S3 bucket → Lambda function → CloudWatch logs**.
+* Lambda can now automatically read and process file contents uploaded to S3.
 
----
-
-With this, we completed an end-to-end workflow:
+```
 
 * **S3 bucket event → Lambda trigger → CloudWatch logs output.**
   This demonstrates how AWS Lambda can be used for **event-driven serverless processing**.
